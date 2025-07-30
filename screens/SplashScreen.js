@@ -5,7 +5,7 @@ export default function SplashScreen({ navigation }) {
   useEffect(() => {
     const timeout = setTimeout(() => {
       navigation.replace('Auth');
-    }, 3000); // 3 segundos
+    }, 4000); // 4 segundos
 
     return () => clearTimeout(timeout);
   }, [navigation]);
@@ -13,7 +13,7 @@ export default function SplashScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../assets/mio_logo_blue.png')}
+        source={require('../assets/mio_logo_white.png')} /*mio_logo_white.png */
         style={styles.logo}
         resizeMode="contain"
       />
@@ -26,10 +26,10 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: '#fff',
+    backgroundColor: '#50D8BC', /* #ffff*/
   },
   logo: {
-    width: 200,
-    height: 200,
+    width: 80,
+    height: 80,
   },
 });

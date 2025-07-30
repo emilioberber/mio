@@ -1,29 +1,61 @@
 import React from 'react';
-import { View, StyleSheet, Image } from 'react-native';
+import { View, StyleSheet, Image, TouchableOpacity  } from 'react-native';
 import { Text, Button } from 'react-native-paper';
+import { MaterialIcons, FontAwesome } from '@expo/vector-icons';
 
 export default function AuthScreen({ navigation }) {
   return (
     <View style={styles.container}>
+      {/* Logo */}
       <Image source={require('../assets/mio_logo_blue.png')} style={styles.logo} />
 
-      <Button
-        mode="contained"
-        style={styles.loginButton}
-        labelStyle={styles.loginLabel}
-        onPress={() => navigation.navigate('QRScanner')}
-        >
-        Iniciar Sesión
-      </Button>
+      {/* Eslogan */}
+      <Text style={styles.slogan}>
+        Divide fácil. Paga lo tuyo. Pago lo <Text style={{ color: '#50D8BC', fontWeight: "bold" }}>mio</Text>.
+      </Text>
 
+
+      {/* Botón: Email */}
       <Button
         mode="outlined"
-        style={styles.signupButton}
-        labelStyle={styles.signupLabel}
-        onPress={() => console.log('Ir a Crear Cuenta')}
+        icon={() => <MaterialIcons name="email" size={20} color="#50D8BC" />}
+        onPress={() => navigation.navigate('LoginWithEmailScreen')}
+        style={styles.authButton}
+        labelStyle={styles.authButtonLabel}
       >
-        Crear Cuenta
+        Ingresar con email
       </Button>
+
+      {/* Botón: Celular */}
+      <Button
+        mode="outlined"
+        icon={() => <FontAwesome name="phone" size={20} color="#50D8BC" />}
+        onPress={() => navigation.navigate('LoginWithPhoneScreen')}
+        style={styles.authButton}
+        labelStyle={styles.authButtonLabel}
+      >
+        Ingresar con celular
+      </Button>
+
+      {/* Botón: Google */}
+      <Button
+        mode="outlined"
+        icon={() => <FontAwesome name="google" size={20} color="#50D8BC" />}
+        onPress={() => console.log('Ingresar con Google')}
+        style={styles.authButton}
+        labelStyle={styles.authButtonLabel}
+      >
+        Ingresar con Google
+      </Button>
+
+      {/* Texto Crear cuenta */}
+      <View style={styles.signupTextContainer}>
+        <Text style={styles.signupText}>¿No tienes cuenta? </Text>
+            <TouchableOpacity onPress={() => navigation.navigate('SignupScreen')}>
+                <Text style={styles.signupLink}>Crear cuenta</Text>
+            </TouchableOpacity>
+      </View>
+
     </View>
   );
 }
@@ -31,7 +63,7 @@ export default function AuthScreen({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    justifyContent: 'center',
+    paddingTop: 200,
     alignItems: 'center',
     paddingHorizontal: 32,
     backgroundColor: '#FFFFFF',
@@ -40,28 +72,38 @@ const styles = StyleSheet.create({
     width: 150,
     height: 150,
     resizeMode: 'contain',
-    marginBottom: 40,
+    marginBottom: 20,
   },
-  loginButton: {
-    backgroundColor: '#50D8BC',
-    marginBottom: 16,
-    borderRadius: 8,
-    width: '100%',
-  },
-  loginLabel: {
-    color: 'white',
-    fontWeight: 'bold',
+  slogan: {
     fontSize: 16,
+    color: '#555',
+    marginBottom: 40,
+    textAlign: 'center',
   },
-  signupButton: {
+  authButton: {
+    width: '100%',
     borderColor: '#50D8BC',
     borderWidth: 2,
     borderRadius: 8,
-    width: '100%',
+    marginBottom: 16,
+    backgroundColor: 'transparent',
   },
-  signupLabel: {
+  authButtonLabel: {
     color: '#50D8BC',
     fontWeight: 'bold',
     fontSize: 16,
   },
+  signupTextContainer: {
+    flexDirection: 'row',
+    marginTop: 32,
+  },
+  signupText: {
+    fontSize: 14,
+    color: '#555',
+  },
+  signupLink: {
+    color: '#50D8BC',
+    fontWeight: 'bold',
+  },
+
 });

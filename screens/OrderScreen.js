@@ -1,6 +1,12 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 
+{/*
+    AQUÍ ES DONDE VA TODA LA LÓGICA SEPARADA POR:
+    - RESTAURANTE
+    - ID DE LA MESA
+*/}
+
 export default function OrderScreen({ route }) {
   const { restaurantId, table } = route.params;
 
@@ -9,7 +15,7 @@ export default function OrderScreen({ route }) {
       <Text style={styles.title}>🍽️ Restaurante: {restaurantId}</Text>
       <Text style={styles.subtitle}>🪑 Mesa: {table}</Text>
 
-      {/* Aquí después pondrás la lógica para mostrar los productos pedidos */}
+      {/* Aquí después va la lógica para mostrar los productos pedidos */}
     </View>
   );
 }

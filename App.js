@@ -5,20 +5,29 @@ import { Provider as PaperProvider } from 'react-native-paper';
 
 import SplashScreen from './screens/SplashScreen';
 import AuthScreen from './screens/AuthScreen';
-import QRScreen from './screens/QRScanner';
 import OrderScreen from './screens/OrderScreen';
+import LoginWithEmailScreen from './screens/LoginWithEmailScreen';
+import LoginWithPhoneScreen from './screens/LoginWithPhoneScreen';
+import SignupScreen from './screens/SignupScreen';
+import QRScanner from './screens/QRScanner';
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
+
+  console.log("🚨 QRScanner is:", QRScanner);
+
   return (
     <PaperProvider>
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Splash">
           <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
           <Stack.Screen name="Auth" component={AuthScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="QRScanner" component={QRScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="QRScanner" component={QRScanner} options={{ headerShown: false }}/>
           <Stack.Screen name="OrderScreen" component={OrderScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="LoginWithEmailScreen" component={LoginWithEmailScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="LoginWithPhoneScreen" component={LoginWithPhoneScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="SignupScreen" component={SignupScreen} options={{ headerShown: false }}/>
 
         </Stack.Navigator>
       </NavigationContainer>
