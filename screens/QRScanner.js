@@ -3,7 +3,6 @@ import {
   View,
   Text,
   StyleSheet,
-  Alert,
   Image,
   Button,
   TouchableOpacity,
@@ -16,6 +15,7 @@ const QRScanner = () => {
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [invalidQR, setInvalidQR] = useState(false);
+  const [flash, setFlash] = useState('off'); // Flash state
   const navigation = useNavigation();
 
   // Resetear estados cada vez que la pantalla gana foco
@@ -45,8 +45,7 @@ const QRScanner = () => {
       } catch (error) {
         setScanned(true);
         setInvalidQR(true);
-        //Alert.alert("QR inválido", "Este código QR no es válido o no tiene el formato esperado.");
-        setTimeout(() => setScanned(false), 3000); // Rehabilita escaneo
+        setTimeout(() => setScanned(false), 3000);
       }
     }
   };
@@ -70,10 +69,23 @@ const QRScanner = () => {
         <Ionicons name="arrow-back" size={28} color="#50D8BC" />
       </TouchableOpacity>
 
+      {/* Botón de linterna */}
+      <TouchableOpacity
+        style={styles.flashButton}
+        onPress={() => setFlash(flash === 'off' ? 'torch' : 'off')}
+      >
+        <Ionicons
+          name={flash === 'off' ? 'flashlight-outline' : 'flashlight'}
+          size={28}
+          color="#50D8BC"
+        />
+      </TouchableOpacity>
+
       <CameraView
         style={styles.camera}
         barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
         onBarcodeScanned={handleScan}
+        flash={flash}
       >
         <View style={styles.overlay}>
           <Image
@@ -128,6 +140,16 @@ const styles = StyleSheet.create({
     borderRadius: 24,
     padding: 6,
   },
+  flashButton: {
+    position: "absolute",
+    top: 60,
+    right: 20,
+    zIndex: 10,
+    backgroundColor: "rgba(255,255,255,0.9)",
+    borderRadius: 24,
+    padding: 6,
+    
+  },
   permissionContainer: {
     flex: 1,
     justifyContent: "center",
@@ -166,7 +188,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: "white",
     borderRadius: 10,
-    marginBottom: 10,
+    marginBottom: 100,
   },
   invalidQRText: {
     color: "red",

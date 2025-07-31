@@ -79,6 +79,7 @@ export default function LoginWithPhoneScreen({ navigation }) {
                 />
               </View>
 
+              
               {/* Botones de envío */}
               <Button
                 mode="contained"
