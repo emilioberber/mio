@@ -65,7 +65,7 @@ const QRScanner = () => {
   return (
     <View style={styles.container}>
       {/* Botón de regresar */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
+      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Auth')}>
         <Ionicons name="arrow-back" size={28} color="#50D8BC" />
       </TouchableOpacity>
 

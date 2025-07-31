@@ -9,6 +9,7 @@ import {
   ScrollView,
   TouchableWithoutFeedback,
   Keyboard,
+  Alert,
 } from 'react-native';
 import { Text, TextInput, Button } from 'react-native-paper';
 import { Ionicons } from '@expo/vector-icons';
@@ -26,12 +27,16 @@ export default function LoginWithPhoneScreen({ navigation }) {
 
   const fullPhone = `+${callingCode}${phone}`;
 
-  const handleSMS = () => {
-    console.log('Enviar código por SMS a:', fullPhone);
-  };
+  const handleSendCode = (method) => {
+    if (!phone.trim()) {
+      Alert.alert('Número requerido', 'Por favor ingresa tu número de celular.');
+      return;
+    }
 
-  const handleWhatsApp = () => {
-    console.log('Enviar código por WhatsApp a:', fullPhone);
+    navigation.navigate('ConfirmCode', {
+      phone: fullPhone,
+      method: method, // 'SMS' o 'WhatsApp'
+    });
   };
 
   return (
@@ -47,16 +52,11 @@ export default function LoginWithPhoneScreen({ navigation }) {
 
           <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
             <View style={styles.container}>
-              {/* Logo */}
               <Image source={require('../assets/mio_logo_blue.png')} style={styles.logo} />
 
               <Text style={styles.title}>Iniciar sesión con celular</Text>
+              <Text style={styles.subtitle}>Te enviaremos un código único de verificación</Text>
 
-              <Text style={styles.subtitle}>
-                Te enviaremos un código único de verificación
-              </Text>
-
-              {/* Selector de país y número */}
               <View style={styles.phoneRow}>
                 <CountryPicker
                   countryCode={countryCode}
@@ -79,13 +79,11 @@ export default function LoginWithPhoneScreen({ navigation }) {
                 />
               </View>
 
-              
-              {/* Botones de envío */}
               <Button
                 mode="contained"
                 style={styles.smsButton}
                 labelStyle={styles.loginLabel}
-                onPress={handleSMS}
+                onPress={() => handleSendCode('SMS')}
               >
                 Recibirlo por SMS
               </Button>
@@ -94,7 +92,7 @@ export default function LoginWithPhoneScreen({ navigation }) {
                 mode="outlined"
                 style={styles.whatsappButton}
                 labelStyle={styles.whatsappLabel}
-                onPress={handleWhatsApp}
+                onPress={() => handleSendCode('WhatsApp')}
               >
                 Recibirlo por WhatsApp
               </Button>

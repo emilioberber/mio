@@ -14,6 +14,7 @@ import Wallet from './screens/Wallet';
 import Perfil from './screens/Perfil';
 import Ayuda from './screens/Ayuda';
 import Restaurantes from './screens/Restaurantes';
+import ConfirmCodeScreen from './screens/ConfirmCodeScreen';
 
 
 const Stack = createNativeStackNavigator();
@@ -34,7 +35,8 @@ export default function App() {
           <Stack.Screen name="Perfil" component={Perfil} options={{ headerShown: false }}/>
           <Stack.Screen name="Ayuda" component={Ayuda} options={{ headerShown: false }}/>
           <Stack.Screen name="Restaurantes" component={Restaurantes} options={{ headerShown: false }}/>
-          
+          <Stack.Screen name="ConfirmCode" component={ConfirmCodeScreen} options={{ headerShown: false }}/>
+
         </Stack.Navigator>
       </NavigationContainer>
     </PaperProvider>
