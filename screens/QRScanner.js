@@ -27,7 +27,7 @@ const QRScanner = () => {
   );
 
   const handleScan = ({ data }) => {
-    if (!scanned) {
+    if (!scanned && typeof data === "string") {
       try {
         const parsedData = JSON.parse(data);
         const { restaurantId, table } = parsedData;
@@ -40,12 +40,13 @@ const QRScanner = () => {
             table,
           });
         } else {
-          setInvalidQR(true);
-          Alert.alert("QR inválido", "Faltan campos necesarios.");
+          throw new Error("Missing fields");
         }
       } catch (error) {
+        setScanned(true);
         setInvalidQR(true);
-        Alert.alert("QR inválido", "El QR no tiene formato JSON válido.");
+        //Alert.alert("QR inválido", "Este código QR no es válido o no tiene el formato esperado.");
+        setTimeout(() => setScanned(false), 3000); // Rehabilita escaneo
       }
     }
   };
@@ -70,7 +71,6 @@ const QRScanner = () => {
       </TouchableOpacity>
 
       <CameraView
-
         style={styles.camera}
         barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
         onBarcodeScanned={handleScan}
@@ -88,6 +88,29 @@ const QRScanner = () => {
           {invalidQR && (
             <Text style={styles.invalidQRText}>QR No válido</Text>
           )}
+        </View>
+
+        {/* Barra inferior de iconos */}
+        <View style={styles.bottomNav}>
+          <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Perfil')}>
+            <Ionicons name="person-outline" size={30} color="#fff" />
+            <Text style={styles.navText}>Perfil</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Ayuda')}>
+            <Ionicons name="help-circle-outline" size={30} color="#fff" />
+            <Text style={styles.navText}>Ayuda</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Wallet')}>
+            <Ionicons name="wallet-outline" size={30} color="#fff" />
+            <Text style={styles.navText}>Wallet</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Restaurantes')}>
+            <Ionicons name="restaurant-outline" size={30} color="#fff" />
+            <Text style={styles.navText}>Restaurantes</Text>
+          </TouchableOpacity>
         </View>
       </CameraView>
     </View>
@@ -151,6 +174,26 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     marginTop: 10,
     textAlign: "center",
+  },
+  bottomNav: {
+    position: "absolute",
+    bottom: 0,
+    left: 0,
+    right: 0,
+    height: 80,
+    flexDirection: "row",
+    justifyContent: "space-around",
+    alignItems: "center",
+    paddingBottom: 16,
+  },
+  navItem: {
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  navText: {
+    color: "#fff",
+    fontSize: 12,
+    marginTop: 4,
   },
 });
 

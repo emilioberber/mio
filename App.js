@@ -10,13 +10,15 @@ import LoginWithEmailScreen from './screens/LoginWithEmailScreen';
 import LoginWithPhoneScreen from './screens/LoginWithPhoneScreen';
 import SignupScreen from './screens/SignupScreen';
 import QRScanner from './screens/QRScanner';
+import Wallet from './screens/Wallet';
+import Perfil from './screens/Perfil';
+import Ayuda from './screens/Ayuda';
+import Restaurantes from './screens/Restaurantes';
+
 
 const Stack = createNativeStackNavigator();
 
 export default function App() {
-
-  console.log("🚨 QRScanner is:", QRScanner);
-
   return (
     <PaperProvider>
       <NavigationContainer>
@@ -28,6 +30,10 @@ export default function App() {
           <Stack.Screen name="LoginWithEmailScreen" component={LoginWithEmailScreen} options={{ headerShown: false }}/>
           <Stack.Screen name="LoginWithPhoneScreen" component={LoginWithPhoneScreen} options={{ headerShown: false }}/>
           <Stack.Screen name="SignupScreen" component={SignupScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="Wallet" component={Wallet} options={{ headerShown: false }}/>
+          <Stack.Screen name="Perfil" component={Perfil} options={{ headerShown: false }}/>
+          <Stack.Screen name="Ayuda" component={Ayuda} options={{ headerShown: false }}/>
+          <Stack.Screen name="Restaurantes" component={Restaurantes} options={{ headerShown: false }}/>
 
         </Stack.Navigator>
       </NavigationContainer>
