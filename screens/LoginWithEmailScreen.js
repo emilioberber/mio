@@ -21,7 +21,6 @@ export default function LoginWithEmailScreen({ navigation }) {
     >
       <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
         <View style={{ flex: 1 }}>
-          {/* Botón de regresar (más abajo) */}
           <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
             <Ionicons name="arrow-back" size={24} color="#50D8BC" />
           </TouchableOpacity>

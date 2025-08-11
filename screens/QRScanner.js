@@ -66,7 +66,7 @@ const QRScanner = () => {
     <View style={styles.container}>
       {/* Botón de regresar */}
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Auth')}>
-        <Ionicons name="arrow-back" size={28} color="#50D8BC" />
+        <Ionicons name="arrow-back" size={28} color="#ffffffff" />
       </TouchableOpacity>
 
       {/* Botón de linterna */}
@@ -77,7 +77,7 @@ const QRScanner = () => {
         <Ionicons
           name={flash === 'off' ? 'flashlight-outline' : 'flashlight'}
           size={28}
-          color="#50D8BC"
+          color="#ffffffff"
         />
       </TouchableOpacity>
 
@@ -105,22 +105,22 @@ const QRScanner = () => {
         {/* Barra inferior de iconos */}
         <View style={styles.bottomNav}>
           <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Perfil')}>
-            <Ionicons name="person-outline" size={30} color="#fff" />
+            <Ionicons name="person-outline" size={25} color="#fff" />
             <Text style={styles.navText}>Perfil</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Ayuda')}>
-            <Ionicons name="help-circle-outline" size={30} color="#fff" />
+            <Ionicons name="help-circle-outline" size={25} color="#fff" />
             <Text style={styles.navText}>Ayuda</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Wallet')}>
-            <Ionicons name="wallet-outline" size={30} color="#fff" />
+            <Ionicons name="wallet-outline" size={25} color="#fff" />
             <Text style={styles.navText}>Wallet</Text>
           </TouchableOpacity>
 
           <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Restaurantes')}>
-            <Ionicons name="restaurant-outline" size={30} color="#fff" />
+            <Ionicons name="restaurant-outline" size={25} color="#fff" />
             <Text style={styles.navText}>Restaurantes</Text>
           </TouchableOpacity>
         </View>
@@ -136,7 +136,6 @@ const styles = StyleSheet.create({
     top: 60,
     left: 20,
     zIndex: 10,
-    backgroundColor: "rgba(255,255,255,0.9)",
     borderRadius: 24,
     padding: 6,
   },
@@ -145,7 +144,6 @@ const styles = StyleSheet.create({
     top: 60,
     right: 20,
     zIndex: 10,
-    backgroundColor: "rgba(255,255,255,0.9)",
     borderRadius: 24,
     padding: 6,
     
@@ -206,7 +204,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-around",
     alignItems: "center",
-    paddingBottom: 16,
+    paddingBottom: 40,
   },
   navItem: {
     alignItems: "center",
