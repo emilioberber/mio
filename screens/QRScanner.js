@@ -9,16 +9,15 @@ import {
 } from "react-native";
 import { CameraView, useCameraPermissions } from "expo-camera";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
-import { Ionicons } from '@expo/vector-icons';
+import { Ionicons } from "@expo/vector-icons";
 
 const QRScanner = () => {
   const [permission, requestPermission] = useCameraPermissions();
   const [scanned, setScanned] = useState(false);
   const [invalidQR, setInvalidQR] = useState(false);
-  const [flash, setFlash] = useState('off'); // Flash state
+  const [flash, setFlash] = useState("off");
   const navigation = useNavigation();
 
-  // Resetear estados cada vez que la pantalla gana foco
   useFocusEffect(
     React.useCallback(() => {
       setScanned(false);
@@ -64,73 +63,85 @@ const QRScanner = () => {
 
   return (
     <View style={styles.container}>
+      {/* Cámara en el fondo */}
+      <CameraView
+        style={StyleSheet.absoluteFillObject}
+        barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
+        onBarcodeScanned={handleScan}
+        flash={flash}
+      />
+
       {/* Botón de regresar */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Auth')}>
-        <Ionicons name="arrow-back" size={28} color="#ffffffff" />
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.navigate("Auth")}
+      >
+        <Ionicons name="arrow-back" size={28} color="#fff" />
       </TouchableOpacity>
 
       {/* Botón de linterna */}
       <TouchableOpacity
         style={styles.flashButton}
-        onPress={() => setFlash(flash === 'off' ? 'torch' : 'off')}
+        onPress={() => setFlash(flash === "off" ? "torch" : "off")}
       >
         <Ionicons
-          name={flash === 'off' ? 'flashlight-outline' : 'flashlight'}
+          name={flash === "off" ? "flashlight-outline" : "flashlight"}
           size={28}
-          color="#ffffffff"
+          color="#fff"
         />
       </TouchableOpacity>
 
-      <CameraView
-        style={styles.camera}
-        barcodeScannerSettings={{ barcodeTypes: ["qr"] }}
-        onBarcodeScanned={handleScan}
-        flash={flash}
-      >
-        <View style={styles.overlay}>
-          <Image
-            source={require("../assets/mio_logo_blue.png")}
-            style={styles.logo}
-          />
-          <Text style={styles.scanText}>
-            Escanea el código QR de tu cuenta
-          </Text>
-          <View style={styles.scanArea} />
+      {/* Overlay de logo y texto */}
+      <View style={styles.overlay}>
+        <Image
+          source={require("../assets/mio_logo_blue.png")}
+          style={styles.logo}
+        />
+        <Text style={styles.scanText}>Escanea el código QR de tu cuenta</Text>
+        <View style={styles.scanArea} />
+        {invalidQR && <Text style={styles.invalidQRText}>QR No válido</Text>}
+      </View>
 
-          {invalidQR && (
-            <Text style={styles.invalidQRText}>QR No válido</Text>
-          )}
-        </View>
+      {/* Barra inferior de navegación */}
+      <View style={styles.bottomNav}>
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => navigation.navigate("Perfil")}
+        >
+          <Ionicons name="person-outline" size={25} color="#fff" />
+          <Text style={styles.navText}>Perfil</Text>
+        </TouchableOpacity>
 
-        {/* Barra inferior de iconos */}
-        <View style={styles.bottomNav}>
-          <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Perfil')}>
-            <Ionicons name="person-outline" size={25} color="#fff" />
-            <Text style={styles.navText}>Perfil</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => navigation.navigate("Ayuda")}
+        >
+          <Ionicons name="help-circle-outline" size={25} color="#fff" />
+          <Text style={styles.navText}>Ayuda</Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Ayuda')}>
-            <Ionicons name="help-circle-outline" size={25} color="#fff" />
-            <Text style={styles.navText}>Ayuda</Text>
-          </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => navigation.navigate("Wallet")}
+        >
+          <Ionicons name="wallet-outline" size={25} color="#fff" />
+          <Text style={styles.navText}>Wallet</Text>
+        </TouchableOpacity>
 
-          <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Wallet')}>
-            <Ionicons name="wallet-outline" size={25} color="#fff" />
-            <Text style={styles.navText}>Wallet</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity style={styles.navItem} onPress={() => navigation.navigate('Restaurantes')}>
-            <Ionicons name="restaurant-outline" size={25} color="#fff" />
-            <Text style={styles.navText}>Restaurantes</Text>
-          </TouchableOpacity>
-        </View>
-      </CameraView>
+        <TouchableOpacity
+          style={styles.navItem}
+          onPress={() => navigation.navigate("Restaurantes")}
+        >
+          <Ionicons name="restaurant-outline" size={25} color="#fff" />
+          <Text style={styles.navText}>Restaurantes</Text>
+        </TouchableOpacity>
+      </View>
     </View>
   );
 };
 
 const styles = StyleSheet.create({
-  container: { flex: 1 },
+  container: { flex: 1, backgroundColor: "#000" },
   backButton: {
     position: "absolute",
     top: 60,
@@ -146,7 +157,6 @@ const styles = StyleSheet.create({
     zIndex: 10,
     borderRadius: 24,
     padding: 6,
-    
   },
   permissionContainer: {
     flex: 1,
@@ -160,7 +170,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     marginBottom: 16,
   },
-  camera: { flex: 1 },
   overlay: {
     flex: 1,
     justifyContent: "center",
