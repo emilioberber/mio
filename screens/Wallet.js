@@ -18,14 +18,14 @@ const dummyCards = [
     id: '1',
     cardType: 'Visa',
     cardNumber: '**** **** **** 1234',
-    expiry: '12/24',
+    expiry: '12/29',
     bgColor: '#50D8BC',
   },
   {
     id: '2',
     cardType: 'Mastercard',
     cardNumber: '**** **** **** 5678',
-    expiry: '11/25',
+    expiry: '11/2',
     bgColor: '#3478F6',
   },
 ];
@@ -39,7 +39,7 @@ const dummyTransactions = [
   },
   {
     id: '2',
-    title: 'Wings Army',
+    title: 'El Habanero Negro',
     date: '25 Jul 2025',
     amount: '- $500.00',
   },
