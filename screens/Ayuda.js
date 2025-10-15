@@ -1,3 +1,5 @@
+// AYUDA: Preguntas frecuentes, video de como usar mio y soporte
+
 import React from "react";
 import {
   View,

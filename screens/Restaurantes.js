@@ -1,3 +1,5 @@
+// RESTAURANTES EN LOS QUE EL USUARI0 YA VISITÓ 
+
 import React from "react";
 import {
   View,
