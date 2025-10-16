@@ -14,24 +14,29 @@ import {
 import { Ionicons } from "@expo/vector-icons";
 import docenaLogo from "../assets/docena_logo.png";
 
-// 🟢 Habilitar animaciones en Android
 if (Platform.OS === "android" && UIManager.setLayoutAnimationEnabledExperimental) {
   UIManager.setLayoutAnimationEnabledExperimental(true);
 }
 
-// 🧩 Datos de ejemplo
+// 🧩 Datos simulados
 const initialOrder = [
-  { id: "1", name: "Pepito de arrachera", qty: 2, price: 120, paidBy: ["EB"] },
-  { id: "2", name: "Papas a la francesa", qty: 1, price: 80, paidBy: [] },
-  { id: "3", name: "Media orden de ostiones", qty: 1, price: 150, paidBy: ["EB"] },
-  { id: "4", name: "Cerveza artesanal", qty: 12, price: 60, paidBy: ["EB", "EB"] },
+  { id: "1", name: "Pepito de arrachera", qty: 2, price: 210, paidBy: ["EB"] },
+  { id: "2", name: "Tostada de aguachile", qty: 1, price: 180, paidBy: [] },
+  { id: "3", name: "Camote a la francesa", qty: 1, price: 150, paidBy: [] },
+  { id: "4", name: "Orden de ostiones a la diabla", qty: 1, price: 250, paidBy: ["EB"] },
+  { id: "5", name: "Pinguinos", qty: 12, price: 220, paidBy: ["EB", "EB"] },
 ];
 
-// 🧍 Usuario actual
-const currentUser = { name: "Andrea Flores", initials: "AF" };
-
 export default function OrderScreen({ route }) {
-  const { restaurantId, table } = route.params || {};
+  const { restaurantId, table, user } = route.params || {};
+  const currentUser = user || { name: "Jimena Flores" };
+
+  const initials = currentUser.name
+    .split(" ")
+    .map((n) => n[0])
+    .join("")
+    .toUpperCase();
+
   const [order, setOrder] = useState(initialOrder);
   const [selectedUnits, setSelectedUnits] = useState({});
   const [expandedItem, setExpandedItem] = useState(null);
@@ -68,7 +73,7 @@ export default function OrderScreen({ route }) {
 
       const newPaidBy = [...item.paidBy];
       selected.forEach((unitIndex) => {
-        if (!newPaidBy[unitIndex]) newPaidBy[unitIndex] = currentUser.initials;
+        if (!newPaidBy[unitIndex]) newPaidBy[unitIndex] = initials;
       });
 
       return { ...item, paidBy: newPaidBy.slice(0, item.qty) };
@@ -79,12 +84,11 @@ export default function OrderScreen({ route }) {
   };
 
   const handlePayAllOfItem = (item) => {
-    const newPaidBy = Array(item.qty).fill(currentUser.initials);
-    const updated = order.map((i) =>
-      i.id === item.id ? { ...i, paidBy: newPaidBy } : i
-    );
-    setOrder(updated);
-    setExpandedItem(null);
+    const selected = [];
+    for (let i = 0; i < item.qty; i++) {
+      if (!item.paidBy[i]) selected.push(i);
+    }
+    setSelectedUnits((prev) => ({ ...prev, [item.id]: selected }));
   };
 
   const totalAmount = order.reduce((acc, item) => acc + item.price * item.qty, 0);
@@ -96,6 +100,15 @@ export default function OrderScreen({ route }) {
     (acc, item) => acc + item.price * (item.qty - item.paidBy.length),
     0
   );
+  const allPaid = remainingAmount === 0;
+
+  const countPaymentsByUser = (paidByArray) => {
+    const counts = {};
+    paidByArray.forEach((payer) => {
+      counts[payer] = (counts[payer] || 0) + 1;
+    });
+    return counts;
+  };
 
   return (
     <View style={styles.container}>
@@ -107,6 +120,17 @@ export default function OrderScreen({ route }) {
             <View style={styles.header}>
               <Image source={docenaLogo} style={styles.logo} resizeMode="contain" />
               <Text style={styles.orderInfo}>Orden #1234 | Mesa {table}</Text>
+
+              {allPaid && (
+                <View style={styles.thankYouContainer}>
+                  <View style={styles.checkCircle}>
+                    <Ionicons name="checkmark" size={28} color="#fff" />
+                  </View>
+                  <Text style={styles.thankYouText}>
+                    Gracias, ha pagado el total de su cuenta.{"\n"}¡Nos vemos pronto!
+                  </Text>
+                </View>
+              )}
             </View>
 
             <View style={styles.card}>
@@ -117,12 +141,13 @@ export default function OrderScreen({ route }) {
         renderItem={({ item }) => {
           const paidCount = item.paidBy.length;
           const remaining = item.qty - paidCount;
-          const allPaid = remaining === 0;
+          const isAllPaid = remaining === 0;
           const selected = selectedUnits[item.id] || [];
           const expanded = expandedItem === item.id;
           const hasMultiple = item.qty > 1;
+          const paymentsByUser = countPaymentsByUser(item.paidBy);
 
-          const cardBg = allPaid
+          const cardBg = isAllPaid
             ? "#e8f5e9"
             : selected.length > 0
             ? "#f1f8e9"
@@ -134,19 +159,12 @@ export default function OrderScreen({ route }) {
               onPress={() =>
                 hasMultiple ? toggleExpand(item.id) : handleSingleSelect(item.id, item)
               }
-              disabled={allPaid}
             >
-              <View
-                style={[
-                  styles.cardItem,
-                  { backgroundColor: cardBg },
-                  allPaid && { opacity: 0.6 },
-                ]}
-              >
+              <View style={[styles.cardItem, { backgroundColor: cardBg }]}>
                 <View style={{ flex: 1 }}>
                   <View style={styles.itemHeader}>
                     <Text style={styles.itemName}>{item.name}</Text>
-                    {hasMultiple && !allPaid && (
+                    {hasMultiple && (
                       <Ionicons
                         name={expanded ? "chevron-up" : "chevron-down"}
                         size={20}
@@ -156,7 +174,7 @@ export default function OrderScreen({ route }) {
                   </View>
 
                   <Text style={styles.itemSubtitle}>
-                    ${item.price} × {item.qty} unidades
+                    ${item.price} c/u × {item.qty} unidades
                   </Text>
 
                   <Text
@@ -170,20 +188,26 @@ export default function OrderScreen({ route }) {
                       : "Sin pagos aún"}
                   </Text>
 
-                  {!hasMultiple && paidCount > 0 && (
+                  {paidCount > 0 && (
                     <View style={styles.userPaidContainer}>
-                      <View style={[styles.avatar, { backgroundColor: "#81c784" }]}>
-                        <Text style={styles.avatarText}>
-                          {item.paidBy[0] || "?"}
-                        </Text>
-                      </View>
-                      <Text style={styles.paidByText}>
-                        Pagado por{" "}
-                        {item.paidBy[0] === "AF"
-                          ? "Andrea Flores"
-                          : "Emilio Berber"}
-                      </Text>
+                      {Object.entries(paymentsByUser).map(([payer, count]) => (
+                        <View key={payer} style={styles.payerTag}>
+                          <View style={[styles.avatar, { backgroundColor: "#c8e6c9" }]}>
+                            <Text style={[styles.avatarText, { color: "#2e7d32" }]}>
+                              {payer}
+                            </Text>
+                          </View>
+                          <Text style={styles.paidByText}>
+                            {payer === initials ? currentUser.name : "Emilio Berber"} ×{count}
+                          </Text>
+                        </View>
+                      ))}
                     </View>
+                  )}
+
+                  {/* 🔹 Mantiene visible el contador aunque se cambie de item */}
+                  {selected.length > 0 && (
+                    <Text style={styles.selectedCount}>x{selected.length}</Text>
                   )}
 
                   {hasMultiple && expanded && (
@@ -202,18 +226,11 @@ export default function OrderScreen({ route }) {
                                 isPaid && styles.bulletPaid,
                                 isSelected && styles.bulletSelected,
                               ]}
-                              disabled={isPaid || allPaid}
+                              disabled={isPaid}
                               onPress={() => toggleSelectUnit(item.id, i)}
                             >
                               {payer ? (
-                                <Text
-                                  style={[
-                                    styles.bulletInitial,
-                                    { color: payer === "AF" ? "#fff" : "#2e7d32" },
-                                  ]}
-                                >
-                                  {payer}
-                                </Text>
+                                <Text style={styles.bulletInitial}>{payer}</Text>
                               ) : isSelected ? (
                                 <Ionicons name="checkmark" size={14} color="#fff" />
                               ) : null}
@@ -222,14 +239,14 @@ export default function OrderScreen({ route }) {
                         })}
                       </View>
 
-                      {/* 👇 Solo mostrar el botón “Pagar todos” si quedan más de 1 pendientes */}
-                      {!allPaid && remaining > 1 && (
+                      {remaining > 1 && (
                         <TouchableOpacity
                           style={styles.payAllBtn}
                           onPress={() => handlePayAllOfItem(item)}
                         >
+                          <Ionicons name="cash-outline" size={16} color="#2e7d32" />
                           <Text style={styles.payAllText}>
-                            Pagar todos los {item.name.toLowerCase()}
+                            Seleccionar todos los productos
                           </Text>
                         </TouchableOpacity>
                       )}
@@ -250,8 +267,7 @@ export default function OrderScreen({ route }) {
                 Tu selección: <Text style={styles.bold}>${selectedAmount}</Text>
               </Text>
               <Text style={[styles.summaryText, { color: "#c62828" }]}>
-                Aún falta por pagar:{" "}
-                <Text style={styles.bold}>${remainingAmount}</Text>
+                Aún falta por pagar: <Text style={styles.bold}>${remainingAmount}</Text>
               </Text>
             </View>
 
@@ -269,9 +285,7 @@ export default function OrderScreen({ route }) {
               </TouchableOpacity>
 
               <TouchableOpacity style={styles.btnOutline}>
-                <Text style={styles.btnOutlineText}>
-                  Dividir entre comensales
-                </Text>
+                <Text style={styles.btnOutlineText}>Dividir entre comensales</Text>
               </TouchableOpacity>
             </View>
           </>
@@ -283,11 +297,29 @@ export default function OrderScreen({ route }) {
   );
 }
 
+// 🎨 Estilos
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: "#F8F9FA", paddingHorizontal: 20 },
   header: { alignItems: "center", marginTop: 80, marginBottom: 20 },
   logo: { width: 120, height: 120, marginBottom: 10 },
   orderInfo: { fontSize: 12, fontWeight: "600", color: "#333" },
+  thankYouContainer: { alignItems: "center", marginVertical: 20 },
+  checkCircle: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    backgroundColor: "#2e7d32",
+    alignItems: "center",
+    justifyContent: "center",
+    marginBottom: 10,
+  },
+  thankYouText: {
+    textAlign: "center",
+    color: "#2e7d32",
+    fontWeight: "600",
+    fontSize: 14,
+    lineHeight: 20,
+  },
   card: { marginBottom: 10 },
   sectionTitle: { fontSize: 20, fontWeight: "700", color: "#222" },
   cardItem: {
@@ -298,20 +330,22 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.05,
     shadowRadius: 5,
     elevation: 2,
+    position: "relative",
   },
   itemHeader: { flexDirection: "row", justifyContent: "space-between", alignItems: "center" },
   itemName: { fontSize: 16, fontWeight: "600", color: "#333" },
   itemSubtitle: { fontSize: 14, color: "#777", marginTop: 2 },
   paidInfo: { fontSize: 13, marginTop: 4, fontStyle: "italic" },
-  userPaidContainer: { flexDirection: "row", alignItems: "center", marginTop: 6, gap: 6 },
+  userPaidContainer: { flexDirection: "row", flexWrap: "wrap", marginTop: 8, gap: 8 },
+  payerTag: { flexDirection: "row", alignItems: "center", gap: 4 },
   avatar: {
-    width: 26,
-    height: 26,
-    borderRadius: 13,
+    width: 24,
+    height: 24,
+    borderRadius: 12,
     alignItems: "center",
     justifyContent: "center",
   },
-  avatarText: { fontWeight: "700", color: "#fff", fontSize: 12 },
+  avatarText: { fontWeight: "700", fontSize: 10 },
   paidByText: { fontSize: 13, color: "#388e3c" },
   bulletContainer: { flexDirection: "row", marginTop: 10, gap: 8, flexWrap: "wrap" },
   bullet: {
@@ -326,15 +360,33 @@ const styles = StyleSheet.create({
   },
   bulletSelected: { backgroundColor: "#2e7d32", borderColor: "#2e7d32" },
   bulletPaid: { backgroundColor: "#c8e6c9", borderColor: "#388e3c" },
-  bulletInitial: { fontSize: 10, fontWeight: "700" },
+  bulletInitial: { fontSize: 10, color: "#2e7d32", fontWeight: "700" },
+  selectedCount: {
+    position: "absolute",
+    bottom: 10,
+    right: 16,
+    backgroundColor: "#2e7d32",
+    color: "#fff",
+    fontSize: 12,
+    fontWeight: "700",
+    paddingHorizontal: 8,
+    paddingVertical: 4,
+    borderRadius: 10,
+  },
   payAllBtn: {
     marginTop: 10,
-    backgroundColor: "#6cb3f1ff",
-    paddingVertical: 10,
-    borderRadius: 10,
+    flexDirection: "row",
     alignItems: "center",
+    gap: 6,
+    borderColor: "#2e7d32",
+    borderWidth: 1,
+    borderRadius: 8,
+    paddingVertical: 8,
+    paddingHorizontal: 10,
+    alignSelf: "flex-start",
+    backgroundColor: "#fff",
   },
-  payAllText: { color: "#fff", fontWeight: "600", fontSize: 14 },
+  payAllText: { color: "#2e7d32", fontWeight: "600", fontSize: 13 },
   summary: { alignItems: "center", marginTop: 20, marginBottom: 20 },
   summaryText: { fontSize: 16, color: "#444", marginVertical: 2 },
   bold: { fontWeight: "700" },

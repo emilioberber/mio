@@ -45,7 +45,7 @@ const ProfileScreen = ({ navigation }) => {
       <AnimatedAvatar />
 
       {/* Info del perfil */}
-      <Text style={styles.name}>Andrea Flores</Text>
+      <Text style={styles.name}>Jimena Flores</Text>
       <Text style={styles.email}>andyflo@hotmail.com</Text>
       <Text style={styles.phone}>+52 33 1747 7276</Text>
 
@@ -56,7 +56,7 @@ const ProfileScreen = ({ navigation }) => {
         <OptionItem icon="settings-outline" label="Configuración" />
         <OptionItem icon="lock-closed-outline" label="Cambiar contraseña" />
         <OptionItem icon="help-circle-outline" label="Ayuda" />
-        <OptionItem icon="wallet-outline" label="Agregar tarjeta a Wallet" />
+        <OptionItem icon="wallet-outline" label="Ir a Wallet" />
         <OptionItem icon="log-out-outline" label="Cerrar sesión" />
       </View>
     </ScrollView>
