@@ -11,6 +11,7 @@ import LoginWithPhoneScreen from './screens/LoginWithPhoneScreen';
 import SignupScreen from './screens/SignupScreen';
 import QRScanner from './screens/QRScanner';
 import Wallet from './screens/Wallet';
+import AgregarTarjeta from './screens/AgregarTarjeta';
 import Perfil from './screens/Perfil';
 import Ayuda from './screens/Ayuda';
 import Restaurantes from './screens/Restaurantes';
@@ -32,6 +33,7 @@ export default function App() {
           <Stack.Screen name="LoginWithPhoneScreen" component={LoginWithPhoneScreen} options={{ headerShown: false }}/>
           <Stack.Screen name="SignupScreen" component={SignupScreen} options={{ headerShown: false }}/>
           <Stack.Screen name="Wallet" component={Wallet} options={{ headerShown: false }}/>
+          <Stack.Screen name="AgregarTarjeta" component={AgregarTarjeta} options={{ headerShown: false }}/>
           <Stack.Screen name="Perfil" component={Perfil} options={{ headerShown: false }}/>
           <Stack.Screen name="Ayuda" component={Ayuda} options={{ headerShown: false }}/>
           <Stack.Screen name="Restaurantes" component={Restaurantes} options={{ headerShown: false }}/>
