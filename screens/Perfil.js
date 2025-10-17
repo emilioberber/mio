@@ -6,10 +6,11 @@ import {
   ScrollView,
   Image,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 
-// Componente de Avatar Animado
+// 🟢 Componente del avatar animado
 const AnimatedAvatar = () => {
   const [currentImage, setCurrentImage] = useState(0);
 
@@ -34,44 +35,95 @@ const AnimatedAvatar = () => {
 };
 
 const ProfileScreen = ({ navigation }) => {
+  // 🟡 Función para confirmar el cierre de sesión
+  const handleLogout = () => {
+    Alert.alert(
+      'Cerrar sesión',
+      '¿Seguro que quieres cerrar sesión?',
+      [
+        { text: 'Cancelar', style: 'cancel' },
+        {
+          text: 'Continuar',
+          style: 'destructive',
+          onPress: () => navigation.navigate('AuthScreen'),
+        },
+      ],
+      { cancelable: true }
+    );
+  };
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* Botón de regreso */}
+      {/* 🔙 Botón de regreso */}
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.goBack()}>
         <Ionicons name="arrow-back" size={28} color="#50D8BC" />
       </TouchableOpacity>
 
-      {/* Avatar dinámico */}
+      {/* 🧍 Avatar animado */}
       <AnimatedAvatar />
 
-      {/* Info del perfil */}
+      {/* 🪪 Información del usuario */}
       <Text style={styles.name}>Jimena Flores</Text>
-      <Text style={styles.email}>andyflo@hotmail.com</Text>
+      <Text style={styles.email}>jimefloress@gmail.com</Text>
       <Text style={styles.phone}>+52 33 1747 7276</Text>
 
-
-      {/* Opciones de usuario */}
+      {/* ⚙️ Opciones del usuario */}
       <View style={styles.options}>
-        <OptionItem icon="person-outline" label="Editar perfil" />
-        <OptionItem icon="settings-outline" label="Configuración" />
-        <OptionItem icon="lock-closed-outline" label="Cambiar contraseña" />
-        <OptionItem icon="help-circle-outline" label="Ayuda" />
-        <OptionItem icon="wallet-outline" label="Ir a Wallet" />
-        <OptionItem icon="log-out-outline" label="Cerrar sesión" />
+        {/* 1️⃣ Editar perfil */}
+        <OptionItem
+          icon="person-outline"
+          label="Editar perfil"
+          onPress={() => navigation.navigate('EditarPerfil')}
+        />
+
+        {/* 2️⃣ Configuración */}
+        <OptionItem
+          icon="settings-outline"
+          label="Configuración"
+          onPress={() => navigation.navigate('Configuraciones')}
+        />
+
+        {/* 3️⃣ Cambiar contraseña */}
+        <OptionItem
+          icon="lock-closed-outline"
+          label="Cambiar contraseña"
+          onPress={() => navigation.navigate('CambiarContra')}
+        />
+
+        {/* 4️⃣ Ayuda */}
+        <OptionItem
+          icon="help-circle-outline"
+          label="Ayuda"
+          onPress={() => navigation.navigate('Ayuda')}
+        />
+
+        {/* 5️⃣ Wallet */}
+        <OptionItem
+          icon="wallet-outline"
+          label="Ir a Wallet"
+          onPress={() => navigation.navigate('Wallet')}
+        />
+
+        {/* 6️⃣ Cerrar sesión */}
+        <OptionItem
+          icon="log-out-outline"
+          label="Cerrar sesión"
+          onPress={handleLogout}
+        />
       </View>
     </ScrollView>
   );
 };
 
-// Item de opción
-const OptionItem = ({ icon, label }) => (
-  <TouchableOpacity style={styles.optionItem}>
+// 🔸 Componente para cada opción del menú
+const OptionItem = ({ icon, label, onPress }) => (
+  <TouchableOpacity style={styles.optionItem} onPress={onPress}>
     <Ionicons name={icon} size={22} color="#50D8BC" style={{ marginRight: 12 }} />
     <Text style={styles.optionLabel}>{label}</Text>
   </TouchableOpacity>
 );
 
-// Estilos
+// 🎨 Estilos
 const styles = StyleSheet.create({
   container: {
     padding: 24,
@@ -109,7 +161,7 @@ const styles = StyleSheet.create({
     fontSize: 14,
     color: '#777',
   },
-  phone:{
+  phone: {
     fontSize: 12,
     color: '#777',
     marginBottom: 54,

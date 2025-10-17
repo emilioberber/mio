@@ -16,6 +16,10 @@ import Perfil from './screens/Perfil';
 import Ayuda from './screens/Ayuda';
 import Restaurantes from './screens/Restaurantes';
 import ConfirmCodeScreen from './screens/ConfirmCodeScreen';
+import EditarPerfil from './screens/EditarPerfil';
+import Configuraciones from './screens/Configuraciones';
+import CambiarContra from './screens/CambiarContra';
+
 
 
 const Stack = createNativeStackNavigator();
@@ -38,6 +42,9 @@ export default function App() {
           <Stack.Screen name="Ayuda" component={Ayuda} options={{ headerShown: false }}/>
           <Stack.Screen name="Restaurantes" component={Restaurantes} options={{ headerShown: false }}/>
           <Stack.Screen name="ConfirmCode" component={ConfirmCodeScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="EditarPerfil" component={EditarPerfil} options={{ headerShown: false }}/>
+          <Stack.Screen name="Configuraciones" component={Configuraciones} options={{ headerShown: false }}/>
+          <Stack.Screen name="CambiarContra" component={CambiarContra} options={{ headerShown: false }}/>
 
         </Stack.Navigator>
       </NavigationContainer>
