@@ -54,7 +54,7 @@ export default function LoginWithEmailScreen({ navigation }) {
               />
 
               {/* Enlace para recuperar contraseña */}
-              <TouchableOpacity onPress={() => console.log('Recuperar contraseña')}>
+              <TouchableOpacity onPress={() => navigation.navigate("ContraOlvidada")}>
                 <Text style={styles.forgotPassword}>¿Olvidaste tu contraseña?</Text>
               </TouchableOpacity>
 

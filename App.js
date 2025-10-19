@@ -19,6 +19,7 @@ import ConfirmCodeScreen from './screens/ConfirmCodeScreen';
 import EditarPerfil from './screens/EditarPerfil';
 import Configuraciones from './screens/Configuraciones';
 import CambiarContra from './screens/CambiarContra';
+import ContraOlvidada from './screens/ContraOlvidada';
 
 
 
@@ -30,7 +31,7 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator initialRouteName="Splash">
           <Stack.Screen name="Splash" component={SplashScreen} options={{ headerShown: false }} />
-          <Stack.Screen name="Auth" component={AuthScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="AuthScreen" component={AuthScreen} options={{ headerShown: false }} />
           <Stack.Screen name="QRScanner" component={QRScanner} options={{ headerShown: false }}/>
           <Stack.Screen name="OrderScreen" component={OrderScreen} options={{ headerShown: false }}/>
           <Stack.Screen name="LoginWithEmailScreen" component={LoginWithEmailScreen} options={{ headerShown: false }}/>
@@ -45,6 +46,7 @@ export default function App() {
           <Stack.Screen name="EditarPerfil" component={EditarPerfil} options={{ headerShown: false }}/>
           <Stack.Screen name="Configuraciones" component={Configuraciones} options={{ headerShown: false }}/>
           <Stack.Screen name="CambiarContra" component={CambiarContra} options={{ headerShown: false }}/>
+          <Stack.Screen name="ContraOlvidada" component={ContraOlvidada} options={{ headerShown: false }}/>
 
         </Stack.Navigator>
       </NavigationContainer>

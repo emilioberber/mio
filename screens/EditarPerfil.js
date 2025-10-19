@@ -13,8 +13,8 @@ import {
 import { Ionicons } from '@expo/vector-icons';
 
 const EditarPerfil = ({ navigation }) => {
-  const [name, setName] = useState('Jimena Flores');
-  const [email, setEmail] = useState('andyflo@hotmail.com');
+  const [name, setName] = useState('Jimena Floresssss');
+  const [email, setEmail] = useState('jimefloress@gmail.com');
   const [phone, setPhone] = useState('+52 33 1747 7276');
 
   return (
