@@ -10,6 +10,9 @@ import {
   LayoutAnimation,
   Platform,
   UIManager,
+  Modal,
+  TextInput,
+  Pressable,
 } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import docenaLogo from "../assets/docena_logo.png";
@@ -24,10 +27,10 @@ const initialOrder = [
   { id: "2", name: "Tostada de aguachile", qty: 1, price: 180, paidBy: [] },
   { id: "3", name: "Camote a la francesa", qty: 1, price: 150, paidBy: [] },
   { id: "4", name: "Orden de ostiones a la diabla", qty: 1, price: 250, paidBy: ["EB"] },
-  { id: "5", name: "Pinguinos", qty: 12, price: 220, paidBy: ["EB", "EB"] },
+  { id: "5", name: "Pinguinos", qty: 12, price: 220, paidBy: ["EB", "EB"] },
 ];
 
-export default function OrderScreen({ route }) {
+export default function OrderScreen({ navigation, route }) {
   const { restaurantId, table, user } = route.params || {};
   const currentUser = user || { name: "Jimena Flores" };
 
@@ -40,6 +43,9 @@ export default function OrderScreen({ route }) {
   const [order, setOrder] = useState(initialOrder);
   const [selectedUnits, setSelectedUnits] = useState({});
   const [expandedItem, setExpandedItem] = useState(null);
+  const [splitModalVisible, setSplitModalVisible] = useState(false);
+  const [splitPeople, setSplitPeople] = useState("");
+  const [splitAmount, setSplitAmount] = useState("");
 
   const toggleExpand = (itemId) => {
     LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
@@ -66,23 +72,6 @@ export default function OrderScreen({ route }) {
     });
   };
 
-  const handlePaySelected = () => {
-    const updated = order.map((item) => {
-      const selected = selectedUnits[item.id] || [];
-      if (selected.length === 0) return item;
-
-      const newPaidBy = [...item.paidBy];
-      selected.forEach((unitIndex) => {
-        if (!newPaidBy[unitIndex]) newPaidBy[unitIndex] = initials;
-      });
-
-      return { ...item, paidBy: newPaidBy.slice(0, item.qty) };
-    });
-
-    setOrder(updated);
-    setSelectedUnits({});
-  };
-
   const handlePayAllOfItem = (item) => {
     const selected = [];
     for (let i = 0; i < item.qty; i++) {
@@ -100,6 +89,7 @@ export default function OrderScreen({ route }) {
     (acc, item) => acc + item.price * (item.qty - item.paidBy.length),
     0
   );
+
   const allPaid = remainingAmount === 0;
 
   const countPaymentsByUser = (paidByArray) => {
@@ -108,6 +98,40 @@ export default function OrderScreen({ route }) {
       counts[payer] = (counts[payer] || 0) + 1;
     });
     return counts;
+  };
+
+  // 💳 --- Pagar ---
+  const handleGoToTip = (type, amount, extra = {}) => {
+    navigation.navigate("TipScreen", {
+      type,
+      amount,
+      remainingAmount,
+      order,
+      currentUser,
+      ...extra,
+    });
+  };
+
+  // 🔹 Abrir modal “Split”
+  const handleSplit = () => setSplitModalVisible(true);
+
+  // 🔹 Procesar división
+  const handleConfirmSplit = () => {
+    let splitValue = 0;
+    let splitType = "";
+
+    if (splitPeople) {
+      splitValue = remainingAmount / parseInt(splitPeople);
+      splitType = "people";
+    } else if (splitAmount) {
+      splitValue = parseFloat(splitAmount);
+      splitType = "amount";
+    }
+
+    if (splitValue > 0) {
+      setSplitModalVisible(false);
+      handleGoToTip("split", splitValue, { splitType, splitInput: splitPeople || splitAmount });
+    }
   };
 
   return (
@@ -205,7 +229,6 @@ export default function OrderScreen({ route }) {
                     </View>
                   )}
 
-                  {/* 🔹 Mantiene visible el contador aunque se cambie de item */}
                   {selected.length > 0 && (
                     <Text style={styles.selectedCount}>x{selected.length}</Text>
                   )}
@@ -245,9 +268,7 @@ export default function OrderScreen({ route }) {
                           onPress={() => handlePayAllOfItem(item)}
                         >
                           <Ionicons name="cash-outline" size={16} color="#2e7d32" />
-                          <Text style={styles.payAllText}>
-                            Seleccionar todos los productos
-                          </Text>
+                          <Text style={styles.payAllText}>Seleccionar todos los productos</Text>
                         </TouchableOpacity>
                       )}
                     </>
@@ -258,7 +279,7 @@ export default function OrderScreen({ route }) {
           );
         }}
         ListFooterComponent={
-          <>
+          <View>
             <View style={styles.summary}>
               <Text style={styles.summaryText}>
                 Total de la cuenta: <Text style={styles.bold}>${totalAmount}</Text>
@@ -272,27 +293,99 @@ export default function OrderScreen({ route }) {
             </View>
 
             <View style={styles.actions}>
+              {/* Botón principal dinámico */}
               <TouchableOpacity
-                style={[styles.btnPrimary, { opacity: selectedAmount === 0 ? 0.5 : 1 }]}
-                disabled={selectedAmount === 0}
-                onPress={handlePaySelected}
+                style={[
+                  styles.btnPrimary,
+                  {
+                    backgroundColor:
+                      selectedAmount === 0 ? "#1e88e5" : "#2e7d32",
+                  },
+                ]}
+                onPress={() =>
+                  handleGoToTip(
+                    selectedAmount === 0 ? "total" : "selected",
+                    selectedAmount === 0 ? remainingAmount : selectedAmount
+                  )
+                }
               >
-                <Text style={styles.btnText}>Pagar productos seleccionados</Text>
+                <Text style={styles.btnText}>
+                  {selectedAmount === 0
+                    ? "Pagar total"
+                    : "Pagar productos seleccionados"}
+                </Text>
               </TouchableOpacity>
 
-              <TouchableOpacity style={styles.btnSecondary}>
-                <Text style={styles.btnText}>Pagar total</Text>
-              </TouchableOpacity>
-
-              <TouchableOpacity style={styles.btnOutline}>
-                <Text style={styles.btnOutlineText}>Dividir entre comensales</Text>
+              {/* Botón Split */}
+              <TouchableOpacity
+                style={styles.btnOutline}
+                onPress={handleSplit}
+              >
+                <Text style={styles.btnOutlineText}>Split 🤝</Text>
               </TouchableOpacity>
             </View>
-          </>
+          </View>
         }
         showsVerticalScrollIndicator={false}
         contentContainerStyle={{ paddingBottom: 80 }}
       />
+
+      {/* --- Modal Split --- */}
+      <Modal
+        visible={splitModalVisible}
+        transparent
+        animationType="fade"
+        onRequestClose={() => setSplitModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>Dividir cuenta</Text>
+
+            <Text style={styles.modalSubtitle}>
+              Elige cómo quieres dividir el total restante: ${remainingAmount}
+            </Text>
+
+            <TextInput
+              style={styles.input}
+              placeholder="Dividir entre cuántas personas"
+              keyboardType="number-pad"
+              value={splitPeople}
+              onChangeText={(t) => {
+                setSplitPeople(t);
+                setSplitAmount("");
+              }}
+            />
+
+            <Text style={styles.orText}>— o —</Text>
+
+            <TextInput
+              style={styles.input}
+              placeholder="Pagar monto exacto ($)"
+              keyboardType="decimal-pad"
+              value={splitAmount}
+              onChangeText={(t) => {
+                setSplitAmount(t);
+                setSplitPeople("");
+              }}
+            />
+
+            <View style={styles.modalActions}>
+              <TouchableOpacity
+                style={[styles.btnPrimary, { flex: 1 }]}
+                onPress={handleConfirmSplit}
+              >
+                <Text style={styles.btnText}>Confirmar</Text>
+              </TouchableOpacity>
+              <Pressable
+                style={[styles.btnOutline, { flex: 1, marginLeft: 10 }]}
+                onPress={() => setSplitModalVisible(false)}
+              >
+                <Text style={styles.btnOutlineText}>Cancelar</Text>
+              </Pressable>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </View>
   );
 }
@@ -388,30 +481,54 @@ const styles = StyleSheet.create({
   },
   payAllText: { color: "#2e7d32", fontWeight: "600", fontSize: 13 },
   summary: { alignItems: "center", marginTop: 20, marginBottom: 20 },
-  summaryText: { fontSize: 16, color: "#444", marginVertical: 2 },
-  bold: { fontWeight: "700" },
-  actions: { marginBottom: 10 },
+  summaryText: { fontSize: 14, color: "#555", marginBottom: 4 },
+  bold: { fontWeight: "700", color: "#000" },
+  actions: { marginBottom: 40 },
   btnPrimary: {
     backgroundColor: "#2e7d32",
-    padding: 15,
     borderRadius: 12,
+    paddingVertical: 16,
     alignItems: "center",
     marginBottom: 12,
   },
-  btnSecondary: {
-    backgroundColor: "#1e88e5",
-    padding: 15,
-    borderRadius: 12,
-    alignItems: "center",
-    marginBottom: 12,
-  },
+  btnText: { color: "#fff", fontWeight: "700", fontSize: 16 },
   btnOutline: {
-    borderColor: "#555",
     borderWidth: 1.5,
-    padding: 15,
-    borderRadius: 12,
+    borderColor: "#2e7d32",
+   borderRadius: 12,
+    paddingVertical: 16,
+    alignItems: "center",
+    marginBottom: 12,
+  },
+  btnOutlineText: { color: "#2e7d32", fontWeight: "700", fontSize: 16 },
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0,0,0,0.5)",
+    justifyContent: "center",
     alignItems: "center",
   },
-  btnText: { color: "#fff", fontWeight: "600", fontSize: 16 },
-  btnOutlineText: { color: "#333", fontWeight: "600", fontSize: 16 },
+  modalContent: {
+    width: "85%",
+    backgroundColor: "#fff",
+    borderRadius: 16,
+    padding: 20,
+  },
+  modalTitle: { fontSize: 18, fontWeight: "700", color: "#222" },
+  modalSubtitle: { fontSize: 14, color: "#555", marginTop: 6, marginBottom: 10 },
+  input: {
+    borderWidth: 1.3,
+    borderColor: "#ccc",
+    borderRadius: 10,
+    padding: 10,
+    marginTop: 12,
+    fontSize: 15,
+    color: "#333",
+  },
+  orText: {
+    textAlign: "center",
+    marginVertical: 10,
+    color: "#999",
+    fontWeight: "500",
+  },
+  modalActions: { flexDirection: "row", marginTop: 20 },
 });

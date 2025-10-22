@@ -20,6 +20,9 @@ import EditarPerfil from './screens/EditarPerfil';
 import Configuraciones from './screens/Configuraciones';
 import CambiarContra from './screens/CambiarContra';
 import ContraOlvidada from './screens/ContraOlvidada';
+import TipScreen from './screens/TipScreen';
+import PagarScreen from './screens/PagarScreen';
+
 
 
 
@@ -47,6 +50,8 @@ export default function App() {
           <Stack.Screen name="Configuraciones" component={Configuraciones} options={{ headerShown: false }}/>
           <Stack.Screen name="CambiarContra" component={CambiarContra} options={{ headerShown: false }}/>
           <Stack.Screen name="ContraOlvidada" component={ContraOlvidada} options={{ headerShown: false }}/>
+          <Stack.Screen name="TipScreen" component={TipScreen} options={{ headerShown: false }}/>
+          <Stack.Screen name="PagarScreen" component={PagarScreen} options={{ headerShown: false }}/>
 
         </Stack.Navigator>
       </NavigationContainer>

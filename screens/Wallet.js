@@ -17,7 +17,7 @@ const initialCards = [
   {
     id: '1',
     cardType: 'Visa',
-    cardNumber: '**** **** **** 3221',
+    cardNumber: '**** **** **** 4821',
     expiry: '12/29',
     bgColor: '#50D8BC',
   },
@@ -43,7 +43,7 @@ const dummyTransactions = [
     title: 'Docena',
     date: '15 Oct 2025',
     amount: '- $1,054.00',
-    cardUsed: 'Visa **** 3221',
+    cardUsed: 'Visa **** 4821',
   },
   {
     id: '2',
@@ -64,7 +64,7 @@ const dummyTransactions = [
     title: 'Docena',
     date: '21 Ago 2025',
     amount: '- $1300.00',
-    cardUsed: 'Visa **** 3221',
+    cardUsed: 'Visa **** 4821',
   },
 ];
 
